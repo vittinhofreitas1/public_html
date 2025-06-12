@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pra Sempre Nós Dois</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles and Tailwind Config -->
+    <style>
+        /* Adicionando as fontes customizadas ao Tailwind */
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Montserrat', 'sans-serif'],
+                        'cursive': ['Dancing Script', 'cursive'],
+                    },
+                    colors: {
+                        'brand-background': '#FFF8F0',
+                        'brand-text': '#4F1D23',
+                        'brand-primary': '#C84B64',   
+                        'brand-accent': '#D4AF37',     
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
+                        'subtle-pulse': 'subtlePulse 2.5s infinite ease-in-out'
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        subtlePulse: {
+                           '0%, 100%': { transform: 'scale(1)' },
+                           '50%': { transform: 'scale(1.03)' },
+                        }
+                    }
+                }
+            }
+        }
+    </style>
+</head>
+<body class="bg-brand-background font-sans text-brand-text antialiased">
+
+    <!-- HERO SECTION -->
+    <header id="inicio" class="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-gradient-to-b from-brand-primary/20 to-brand-background">
+        <div class="absolute inset-0 bg-cover bg-center opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/az-subtle.png');"></div>
+        
+        <div class="z-10 animate-fade-in-up">
+            <h2 class="text-2xl md:text-3xl text-brand-primary font-light mb-4">
+                Um amor que nenhuma dificuldade conseguiu apagar.
+            </h2>
+            <h1 class="font-cursive text-7xl md:text-9xl text-brand-text mb-6">
+                Pra Sempre Nós Dois
+            </h1>
+            <p class="text-xl md:text-2xl text-brand-text/80 font-light italic">
+                "Nossa jornada é nossa força."
+            </p>
+        </div>
+        
+        <!-- Scroll Down Arrow -->
+        <a href="#jornada" class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
+            <svg class="w-8 h-8 text-brand-primary animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </a>
+    </header>
+
+    <main class="overflow-x-hidden">
+        <!-- TIMELINE SECTION -->
+        <section id="jornada" class="py-20 px-6">
+            <div class="container mx-auto max-w-4xl text-center">
+                <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-12">Nossa Linha do Tempo</h2>
+                
+                <div class="relative wrap overflow-hidden p-4 md:p-10 h-full">
+                    <!-- Central Line -->
+                    <div class="absolute h-full border border-dashed border-brand-accent/50" style="left: 50%"></div>
+                    
+                    <!-- Bloco de Momento (Esquerda) - EDITE AQUI -->
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                        <div class="order-1 w-5/12"></div>
+                        <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto font-semibold text-lg text-white">1</h3>
+                        </div>
+                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
+                            <p class="text-sm font-semibold text-brand-primary">07 de Novembro, 2022</p>
+                            <h4 class="font-bold text-lg mb-2 text-brand-text">O Início de Tudo</h4>
+                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
+                                O dia em que lhe mandei a primeira mensagem no WhatsApp. Mal sabíamos o que o destino nos reservava.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                        <div class="order-1 w-5/12"></div>
+                         <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto font-semibold text-lg text-white">2</h3>
+                        </div>
+                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
+                             <p class="text-sm font-semibold text-brand-primary">19 de Novembro, 2022</p>
+                            <h4 class="font-bold text-lg mb-2 text-brand-text">Nosso primeiro encontro</h4>
+                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
+                                O dia em que você foi lá em casa pela primeira vez com aquele macacão de girassol ❤ 
+                            </p>
+                        </div>
+                    </div>
+
+                     <!-- Bloco de Momento (Esquerda) - EDITE AQUI -->
+                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
+                        <div class="order-1 w-5/12"></div>
+                         <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto font-semibold text-lg text-white">3</h3>
+                        </div>
+                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
+                             <p class="text-sm font-semibold text-brand-primary">Setembro de 2024</p>
+                            <h4 class="font-bold text-lg mb-2 text-brand-text">Superando a Tempestade</h4>
+                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
+                                Passamos por um momento difícil, mas nos mantivemos firmes, o amor prevaleceu e aumentou. Provamos que nosso amor era maior que qualquer dificuldade
+                            </p>
+                        </div>
+                    </div>
+                  
+                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
+                        <div class="order-1 w-5/12"></div>
+                         <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
+                            <h3 class="mx-auto font-semibold text-lg text-white">4</h3>
+                        </div>
+                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
+                             <p class="text-sm font-semibold text-brand-primary">Hoje</p>
+                            <h4 class="font-bold text-lg mb-2 text-brand-text">O Nosso "Para Sempre"</h4>
+                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
+                                Mais fortes, mais unidos. Construindo nosso futuro, um dia de cada vez, com a certeza de que estaremos juntos, independente da dificuldade que vier.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY SECTION -->
+        <section id="momentos" class="py-20 px-6 bg-brand-primary/10">
+            <div class="container mx-auto max-w-6xl text-center">
+                <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-12">Nossos Momentos Especiais</h2>
+                
+                <!-- Galeria de Fotos -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
+                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://lh3.googleusercontent.com/pw/AP1GczPm-Hf8_M2905asVusVg15QEc_5MokB2r-I6IuSqOMmL32ZCJ_girurLLCaxET21BeH1fB7U5JPOu1bYzQk3NU8q69j0oWcBOiSdSHsCFeOrk-yUyAUW4600JFBIsYKD4zPnENMPf6KYOia7h-frTk_Jg=w341-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
+                    
+                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://photos.fife.usercontent.google.com/pw/AP1GczM_DnijQZ_W2zSQS4P7Tt18pvPz2WUbJoxYxC1AsaKMYHW2Psvjd-cHww=w341-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
+                    <!-- Imagem 3 - EDITE O SRC -->
+                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://photos.fife.usercontent.google.com/pw/AP1GczOGsLlYSbaofX7OPPQlfgSIShFx8vlhu6m0jh1LnfqIxkNX8GoRSQSRVg=w455-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
+                    <!-- Imagem 4 - EDITE O SRC -->
+                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://photos.fife.usercontent.google.com/pw/AP1GczMWLBjSYa9f5fNOWtRaJeeP2fWJ1M2ykPn5sAvKBEHMeQP-s2eVm_Ym7w=w455-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
+                </div>
+
+                <!-- Vídeo do YouTube - EDITE O SRC -->
+                <div class="max-w-3xl mx-auto animate-on-scroll">
+                    <h3 class="font-cursive text-4xl text-brand-text mb-4">Um Vídeo Para Recordar</h3>
+                    <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-xl">
+                        <!-- Para trocar o vídeo, vá no YouTube, clique em "Compartilhar", depois "Incorporar" e copie o link que aparece no 'src' -->
+                        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- PLAYLIST SECTION -->
+        <section id="playlist" class="py-20 px-6">
+            <div class="container mx-auto max-w-3xl text-center">
+                 <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-12">Nossa Trilha Sonora</h2>
+                 <p class="mb-8 max-w-xl mx-auto text-brand-text/80">As músicas que contam a nossa história</p>
+                 <!-- Spotify Embed - EDITE O SRC -->
+                 <div class="animate-on-scroll shadow-xl rounded-lg overflow-hidden">
+                    <!-- Para trocar a playlist, vá no Spotify, clique nos '...', depois em "Compartilhar" e "Copiar código de incorporação". Cole aqui. -->
+                   <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1AZXNAVDD9ZFIEKySgflFz?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                   <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6wky1KFF0YvgtrFaH4ep9r?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                   <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3Gkg9mRJXJgNpozGIs7Nrm?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                 </div>
+            </div>
+        </section>
+
+        <!-- LOVE LETTER SECTION -->
+        <section id="carta" class="py-20 px-6 bg-brand-primary/10">
+            <div class="container mx-auto max-w-3xl">
+                <div class="bg-brand-background p-8 md:p-12 rounded-lg shadow-2xl relative animate-on-scroll">
+                     <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-6 text-center">Uma Carta Para Você</h2>
+                     <!-- EDITE O TEXTO DA CARTA AQUI -->
+                    <p class="text-lg text-brand-text/90 mb-6 leading-relaxed">
+                        Meu amor,
+                    </p>
+                    <p class="text-brand-text/80 mb-6 leading-relaxed">
+                        Se tem uma palavra que define a gente, é resistência. A nossa história nunca foi sobre perfeição — foi sobre verdade. Sobre enfrentar a bagunça da vida com o peito aberto, com medo às vezes, mas sempre voltando um pro outro.
+                    </p>
+                    <p class="text-brand-text/80 mb-6 leading-relaxed">
+                        Já erramos, já caímos, já nos perdemos. Mas em cada volta, em cada reencontro de olhar, eu entendi: o nosso amor não é frágil — ele é prova. Prova de que o que nasce com alma, com axé, com fé, não se quebra. Se transforma.
+                    </p>
+                    <p class="text-brand-text/80 mb-6 leading-relaxed">
+                        Lembro das noites difíceis, das palavras ditas com dor, dos silêncios pesados. Mas também lembro das risadas, dos reencontros, das promessas de tentar de novo. Tudo isso é nosso. E eu não trocaria nenhum segundo, porque tudo fez da gente o que somos hoje.
+                    </p>
+                    <p class="text-brand-text/80 mb-8 leading-relaxed">
+                        Esse site é meu jeito simples de te lembrar: entre todos os códigos que escrevi na vida, tu és o único que virou sentido. E enquanto o mundo muda e as versões de nós mesmos evoluem, eu continuo aqui — atualizando, aprendendo, mas sempre amando a mesma pessoa: você.
+                    </p>
+                    <p class="font-cursive text-3xl text-brand-text text-right">
+                        Te amo hoje, te escolho sempre.
+                    </p>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center py-8 px-6 bg-brand-background">
+        <p class="text-brand-text/60">Feito com <span class="text-brand-primary animate-subtle-pulse inline-block">❤</span>, amor, código e axé.</p>
+        <p class="text-sm text-brand-text/50">Por José Victor</p>
+    </footer>
+
+    <!-- SCRIPT FOR SCROLL ANIMATIONS -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const scrollElements = document.querySelectorAll(".animate-on-scroll");
+
+            const elementInView = (el, dividend = 1) => {
+                const elementTop = el.getBoundingClientRect().top;
+                return (
+                    elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
+                );
+            };
+
+            const displayScrollElement = (element) => {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            };
+
+            const hideScrollElement = (element) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+            };
+
+            const handleScrollAnimation = () => {
+                scrollElements.forEach((el) => {
+                    // Pre-setting the initial state for the animation
+                    el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+                    if (elementInView(el, 1.25)) {
+                        displayScrollElement(el);
+                    } else {
+                        // Optional: hide element again when it scrolls out of view
+                        // hideScrollElement(el); 
+                    }
+                })
+            }
+            
+            // Initialize elements to be hidden
+            scrollElements.forEach((el) => {
+                 hideScrollElement(el);
+            });
+
+            window.addEventListener("scroll", () => {
+                handleScrollAnimation();
+            });
+            
+            // Trigger animation for elements already in view on load
+            handleScrollAnimation();
+        });
+    </script>
+</body>
+</html>
