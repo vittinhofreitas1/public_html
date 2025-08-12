@@ -1,272 +1,313 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pra Sempre Nós Dois</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Sweet Garden</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- Custom Styles and Tailwind Config -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Montserrat', 'sans-serif'],
-                        'cursive': ['Dancing Script', 'cursive'],
-                    },
-                    colors: {
-                        'brand-background': '#FFF8F0',
-                        'brand-text': '#4F1D23',
-                        'brand-primary': '#C84B64',   
-                        'brand-accent': '#D4AF37',     
-                    },
-                    animation: {
-                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
-                        'subtle-pulse': 'subtlePulse 2.5s infinite ease-in-out'
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        subtlePulse: {
-                           '0%, 100%': { transform: 'scale(1)' },
-                           '50%': { transform: 'scale(1.03)' },
-                        }
-                    }
-                }
-            }
+        body {
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation; /* Impede o zoom com duplo toque em dispositivos móveis */
+        }
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            background-color: #a3b18a;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .gem {
+            width: 100%;
+            padding-bottom: 100%; /* Mantém a proporção quadrada */
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background-size: cover;
+            background-position: center;
+        }
+        .gem.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 12px;
+        }
+        .emergency-button {
+            transition: all 0.3s ease;
+        }
+        .emergency-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 20px 10px rgba(239, 68, 68, 0.5);
         }
     </style>
 </head>
-<body class="bg-brand-background font-sans text-brand-text antialiased">
+<body class="bg-gray-100">
 
-    <!-- HERO SECTION -->
-    <header id="inicio" class="relative min-h-screen flex flex-col items-center justify-center text-center p-6 bg-gradient-to-b from-brand-primary/20 to-brand-background">
-        <div class="absolute inset-0 bg-cover bg-center opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/az-subtle.png');"></div>
-        
-        <div class="z-10 animate-fade-in-up">
-            <h2 class="text-2xl md:text-3xl text-brand-primary font-light mb-4">
-                Um amor que nenhuma dificuldade conseguiu apagar.
-            </h2>
-            <h1 class="font-cursive text-7xl md:text-9xl text-brand-text mb-6">
-                Pra Sempre Nós Dois
-            </h1>
-            <p class="text-xl md:text-2xl text-brand-text/80 font-light italic">
-                "Nossa jornada é nossa força."
-            </p>
+    <!-- Tela do Jogo (Disfarce) -->
+    <div id="game-screen" class="min-h-screen bg-gradient-to-b from-green-200 to-yellow-100 flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-sm mx-auto">
+            <div class="flex justify-between items-center mb-4">
+                <div class="bg-white/70 p-2 rounded-lg shadow">
+                    <h2 class="text-lg font-bold text-green-800">Nível 3</h2>
+                </div>
+                <div class="bg-white/70 p-2 rounded-lg shadow">
+                    <h2 class="text-lg font-bold text-green-800">Pontos: <span id="score">0</span></h2>
+                </div>
+                <button id="settings-button" class="p-2 bg-white/70 rounded-full shadow hover:bg-white transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+            </div>
+            <div id="game-board" class="game-board"></div>
+            <p class="text-center text-green-700 mt-4 text-sm">Combine 3 ou mais flores iguais!</p>
         </div>
-        
-        <!-- Scroll Down Arrow -->
-        <a href="#jornada" class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
-            <svg class="w-8 h-8 text-brand-primary animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </a>
-    </header>
+    </div>
 
-    <main class="overflow-x-hidden">
-        <!-- TIMELINE SECTION -->
-        <section id="jornada" class="py-20 px-6">
-            <div class="container mx-auto max-w-4xl text-center">
-                <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-12">Nossa Linha do Tempo</h2>
-                
-                <div class="relative wrap overflow-hidden p-4 md:p-10 h-full">
-                    <!-- Central Line -->
-                    <div class="absolute h-full border border-dashed border-brand-accent/50" style="left: 50%"></div>
-                    
-                    <!-- Bloco de Momento (Esquerda) - EDITE AQUI -->
-                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
-                        <div class="order-1 w-5/12"></div>
-                        <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto font-semibold text-lg text-white">1</h3>
-                        </div>
-                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
-                            <p class="text-sm font-semibold text-brand-primary">07 de Novembro, 2022</p>
-                            <h4 class="font-bold text-lg mb-2 text-brand-text">O Início de Tudo</h4>
-                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
-                                O dia em que lhe mandei a primeira mensagem no WhatsApp. Mal sabíamos o que o destino nos reservava.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
-                        <div class="order-1 w-5/12"></div>
-                         <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto font-semibold text-lg text-white">2</h3>
-                        </div>
-                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
-                             <p class="text-sm font-semibold text-brand-primary">19 de Novembro, 2022</p>
-                            <h4 class="font-bold text-lg mb-2 text-brand-text">Nosso primeiro encontro</h4>
-                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
-                                O dia em que você foi lá em casa pela primeira vez com aquele macacão de girassol ❤ 
-                            </p>
-                        </div>
-                    </div>
-
-                     <!-- Bloco de Momento (Esquerda) - EDITE AQUI -->
-                    <div class="mb-8 flex justify-between items-center w-full right-timeline">
-                        <div class="order-1 w-5/12"></div>
-                         <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto font-semibold text-lg text-white">3</h3>
-                        </div>
-                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
-                             <p class="text-sm font-semibold text-brand-primary">Setembro de 2024</p>
-                            <h4 class="font-bold text-lg mb-2 text-brand-text">Superando a Tempestade</h4>
-                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
-                                Passamos por um momento difícil, mas nos mantivemos firmes, o amor prevaleceu e aumentou. Provamos que nosso amor era maior que qualquer dificuldade
-                            </p>
-                        </div>
-                    </div>
-                  
-                    <div class="mb-8 flex justify-between flex-row-reverse items-center w-full left-timeline">
-                        <div class="order-1 w-5/12"></div>
-                         <div class="z-20 flex items-center order-1 bg-brand-primary shadow-xl w-12 h-12 rounded-full">
-                            <h3 class="mx-auto font-semibold text-lg text-white">4</h3>
-                        </div>
-                        <div class="order-1 bg-white/50 backdrop-blur-sm rounded-lg shadow-xl w-5/12 px-6 py-4 animate-on-scroll">
-                             <p class="text-sm font-semibold text-brand-primary">Hoje</p>
-                            <h4 class="font-bold text-lg mb-2 text-brand-text">O Nosso "Para Sempre"</h4>
-                            <p class="text-sm leading-snug tracking-wide text-brand-text/80">
-                                Mais fortes, mais unidos. Construindo nosso futuro, um dia de cada vez, com a certeza de que estaremos juntos, independente da dificuldade que vier.
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
+    <!-- Modal de Configurações (Gatilho Secreto) -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content bg-yellow-50">
+            <h2 class="text-2xl font-bold text-center mb-6 text-green-800">Configurações</h2>
+            <div class="mb-4">
+                <label for="player-name" class="block text-green-700 text-sm font-bold mb-2">Nome do Jogador:</label>
+                <input type="text" id="player-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Digite seu nome ou código">
+                <p id="error-message" class="text-red-500 text-xs italic mt-2 hidden">Código incorreto.</p>
             </div>
-        </section>
+            <div class="flex items-center justify-between">
+                <button id="close-modal-button" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition">
+                    Fechar
+                </button>
+                <button id="save-settings-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
 
-        <!-- GALLERY SECTION -->
-        <section id="momentos" class="py-20 px-6 bg-brand-primary/10">
-            <div class="container mx-auto max-w-6xl text-center">
-                <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-12">Nossos Momentos Especiais</h2>
-                
-                <!-- Galeria de Fotos -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://lh3.googleusercontent.com/pw/AP1GczPm-Hf8_M2905asVusVg15QEc_5MokB2r-I6IuSqOMmL32ZCJ_girurLLCaxET21BeH1fB7U5JPOu1bYzQk3NU8q69j0oWcBOiSdSHsCFeOrk-yUyAUW4600JFBIsYKD4zPnENMPf6KYOia7h-frTk_Jg=w341-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
-                    
-                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://lh3.googleusercontent.com/pw/AP1GczPn67XfesZy9WslW4-lSfmxkDRbXsX8bxVTAH09__0LAM94MPSw_NVF5_yRkgalum3zcBEtrsVvvabrq9stilc7RBrszZymiPvo8iaoqLwwKK8mC_QPnpclUSVxcrIZOclOgyqCXnoQPhgq9An7BFFH2A=w405-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
-                    <!-- Imagem 3 - EDITE O SRC -->
-                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://lh3.googleusercontent.com/pw/AP1GczPapICNcPDOxRrBtvDexntJHzcBYL_N8wHOI5dEmGUbRjY4hQ9RhcveZ8WTu6s6FOmric7g-auXkw7whwrjf9lWNeJ1WT-Nw3L2E9Ta_fVnLMrV5JN-9LwrRb9ZCTABaKEk-Ufeq56diO83XCzdK8NpbQ=w341-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
-                    <!-- Imagem 4 - EDITE O SRC -->
-                    <div class="overflow-hidden rounded-lg shadow-lg animate-on-scroll"><img src="https://lh3.googleusercontent.com/pw/AP1GczMHLECSMnoJthjZt__mFjsux5elt63xvPG2BWYdujJn1UY3CPig4XDVNNuw8aju5yVf0rdYbpZMyjLFgUlP0Yyz9wKAZqjEKqPHAMj_3OYkpv2GB25NsDA0Z4pBcYevxU1XTH0whis98fmP9inAkyeaJg=w341-h607-s-no-gm?authuser=0" alt="Foto do casal" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"></div>
+    <!-- Tela Segura (Acesso após senha) -->
+    <div id="secure-screen" class="hidden min-h-screen bg-gray-800 text-white p-4">
+        <div class="max-w-md mx-auto">
+            <div class="text-center my-6">
+                <h1 class="text-2xl font-bold text-purple-300">Você não está sozinha.</h1>
+                <p class="text-purple-100 mt-2">Este é o seu espaço seguro. Estamos aqui para ajudar.</p>
+            </div>
+
+            <!-- Botão de Emergência -->
+            <div class="my-8">
+                <button id="emergency-button" class="emergency-button w-full bg-red-600 text-white font-bold text-xl py-6 rounded-full shadow-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-400 focus:ring-opacity-75">
+                    PEDIR AJUDA AGORA
+                </button>
+                <p class="text-center text-xs text-gray-400 mt-2">Use apenas em caso de emergência real. Ação silenciosa será iniciada.</p>
+            </div>
+
+            <!-- Menu de Funcionalidades Seguras -->
+            <div class="space-y-4">
+                <div class="bg-gray-700 p-4 rounded-lg flex items-center space-x-4 hover:bg-gray-600 cursor-pointer transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-300" viewBox="0 0 20 20" fill="currentColor"><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" /><path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h7a2 2 0 002-2V9a2 2 0 00-2-2h-1z" /></svg>
+                    <div>
+                        <h3 class="font-semibold">Comunidade de Apoio</h3>
+                        <p class="text-sm text-gray-300">Leia relatos e compartilhe sua história anonimamente.</p>
+                    </div>
                 </div>
-
-    
-                <div class="max-w-3xl mx-auto animate-on-scroll">
-                    <h3 class="font-cursive text-4xl text-brand-text mb-4">Um Vídeo Para Recordar</h3>
-                    <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden shadow-xl">
-        
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/NIAnORfCHf8?si=YlkgHueUY1wNiY3f" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <div class="bg-gray-700 p-4 rounded-lg flex items-center space-x-4 hover:bg-gray-600 cursor-pointer transition">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" /></svg>
+                    <div>
+                        <h3 class="font-semibold">Meu Cofre de Provas</h3>
+                        <p class="text-sm text-gray-300">Guarde fotos, áudios e vídeos com segurança.</p>
+                    </div>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg flex items-center space-x-4 hover:bg-gray-600 cursor-pointer transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
+                    <div>
+                        <h3 class="font-semibold">Mapa de Acolhimento</h3>
+                        <p class="text-sm text-gray-300">Encontre delegacias e abrigos próximos.</p>
                     </div>
                 </div>
             </div>
-        </section>
-        
-        <!-- PLAYLIST SECTION -->
-        <section id="playlist" class="py-20 px-6">
-            <div class="container mx-auto max-w-3xl text-center">
-                 <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-12">Nossa Trilha Sonora</h2>
-                 <p class="mb-8 max-w-xl mx-auto text-brand-text/80">As músicas que contam a nossa história</p>
-                 <!-- Spotify Embed - EDITE O SRC -->
-                 <div class="animate-on-scroll shadow-xl rounded-lg overflow-hidden">
-                    <!-- Para trocar a playlist, vá no Spotify, clique nos '...', depois em "Compartilhar" e "Copiar código de incorporação". Cole aqui. -->
-                   <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/1AZXNAVDD9ZFIEKySgflFz?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                   <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6wky1KFF0YvgtrFaH4ep9r?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                   <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3Gkg9mRJXJgNpozGIs7Nrm?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                 </div>
-            </div>
-        </section>
+             <button id="exit-secure-button" class="mt-8 w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition">
+                Sair da Área Segura
+            </button>
+        </div>
+    </div>
 
-        <!-- LOVE LETTER SECTION -->
-        <section id="carta" class="py-20 px-6 bg-brand-primary/10">
-            <div class="container mx-auto max-w-3xl">
-                <div class="bg-brand-background p-8 md:p-12 rounded-lg shadow-2xl relative animate-on-scroll">
-                     <h2 class="font-cursive text-5xl md:text-6xl text-brand-primary mb-6 text-center">Uma Carta Para Você</h2>
-                     <!-- EDITE O TEXTO DA CARTA AQUI -->
-                    <p class="text-lg text-brand-text/90 mb-6 leading-relaxed">
-                        Meu amor,
-                    </p>
-                    <p class="text-brand-text/80 mb-6 leading-relaxed">
-                        Se tem uma palavra que define a gente, é resistência. A nossa história nunca foi sobre perfeição — foi sobre verdade. Sobre enfrentar a bagunça da vida com o peito aberto, com medo às vezes, mas sempre voltando um pro outro.
-                    </p>
-                    <p class="text-brand-text/80 mb-6 leading-relaxed">
-                        Já erramos, já caímos, já nos perdemos. Mas em cada volta, em cada reencontro de olhar, eu entendi: o nosso amor não é frágil — ele é prova. Prova de que o que nasce com alma, com axé, com fé, não se quebra. Se transforma.
-                    </p>
-                    <p class="text-brand-text/80 mb-6 leading-relaxed">
-                        Lembro das noites difíceis, das palavras ditas com dor, dos silêncios pesados. Mas também lembro das risadas, dos reencontros, das promessas de tentar de novo. Tudo isso é nosso. E eu não trocaria nenhum segundo, porque tudo fez da gente o que somos hoje.
-                    </p>
-                    <p class="text-brand-text/80 mb-8 leading-relaxed">
-                        Esse site é meu jeito simples de te lembrar: entre todos os códigos que escrevi na vida, tu és o único que virou sentido. E enquanto o mundo muda e as versões de nós mesmos evoluem, eu continuo aqui — atualizando, aprendendo, mas sempre amando a mesma pessoa: você.
-                    </p>
-                    <p class="font-cursive text-3xl text-brand-text text-right">
-                        Te amo hoje, te escolho sempre.
-                    </p>
-
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="text-center py-8 px-6 bg-brand-background">
-        <p class="text-brand-text/60">Feito com <span class="text-brand-primary animate-subtle-pulse inline-block">❤</span>, amor, código e axé.</p>
-        <p class="text-sm text-brand-text/50">Por José Victor</p>
-    </footer>
-
-    <!-- SCRIPT FOR SCROLL ANIMATIONS -->
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const scrollElements = document.querySelectorAll(".animate-on-scroll");
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameBoard = document.getElementById('game-board');
+            const scoreElement = document.getElementById('score');
+            const settingsButton = document.getElementById('settings-button');
+            const settingsModal = document.getElementById('settings-modal');
+            const closeModalButton = document.getElementById('close-modal-button');
+            const saveSettingsButton = document.getElementById('save-settings-button');
+            const playerNameInput = document.getElementById('player-name');
+            const errorMessage = document.getElementById('error-message');
 
-            const elementInView = (el, dividend = 1) => {
-                const elementTop = el.getBoundingClientRect().top;
-                return (
-                    elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
-                );
-            };
+            const gameScreen = document.getElementById('game-screen');
+            const secureScreen = document.getElementById('secure-screen');
+            const exitSecureButton = document.getElementById('exit-secure-button');
 
-            const displayScrollElement = (element) => {
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            };
+            const boardSize = 7;
+            const gemTypes = ['🌸', '🌻', '🌹', '🌷', '🌼', '🌺'];
+            let board = [];
+            let score = 0;
+            let selectedGem = null;
 
-            const hideScrollElement = (element) => {
-                element.style.opacity = '0';
-                element.style.transform = 'translateY(20px)';
-            };
-
-            const handleScrollAnimation = () => {
-                scrollElements.forEach((el) => {
-                    // Pre-setting the initial state for the animation
-                    el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
-                    if (elementInView(el, 1.25)) {
-                        displayScrollElement(el);
-                    } else {
-                        // Optional: hide element again when it scrolls out of view
-                        // hideScrollElement(el); 
-                    }
-                })
+            // --- Lógica do Jogo ---
+            function createBoard() {
+                for (let i = 0; i < boardSize * boardSize; i++) {
+                    const gem = document.createElement('div');
+                    gem.classList.add('gem');
+                    const randomType = gemTypes[Math.floor(Math.random() * gemTypes.length)];
+                    gem.dataset.type = randomType;
+                    gem.textContent = randomType;
+                    gem.style.fontSize = '24px'; // Ajuste para emojis
+                    gem.style.textAlign = 'center';
+                    gem.style.lineHeight = '1.5';
+                    gem.dataset.index = i;
+                    gem.addEventListener('click', onGemClick);
+                    gameBoard.appendChild(gem);
+                    board.push(gem);
+                }
+                // Ajustar o line-height dinamicamente após a criação
+                setTimeout(() => {
+                    board.forEach(gem => {
+                        gem.style.lineHeight = `${gem.clientHeight}px`;
+                    });
+                }, 0);
             }
             
-            // Initialize elements to be hidden
-            scrollElements.forEach((el) => {
-                 hideScrollElement(el);
+            window.onresize = () => {
+                 board.forEach(gem => {
+                    gem.style.lineHeight = `${gem.clientHeight}px`;
+                });
+            };
+
+            function onGemClick(event) {
+                const clickedGem = event.target;
+                if (!selectedGem) {
+                    selectedGem = clickedGem;
+                    selectedGem.classList.add('selected');
+                } else {
+                    if (isAdjacent(selectedGem, clickedGem)) {
+                        swapGems(selectedGem, clickedGem);
+                        setTimeout(() => {
+                            checkForMatches();
+                            selectedGem.classList.remove('selected');
+                            selectedGem = null;
+                        }, 300);
+                    } else {
+                        selectedGem.classList.remove('selected');
+                        selectedGem = clickedGem;
+                        selectedGem.classList.add('selected');
+                    }
+                }
+            }
+
+            function isAdjacent(gem1, gem2) {
+                const index1 = parseInt(gem1.dataset.index);
+                const index2 = parseInt(gem2.dataset.index);
+                const x1 = index1 % boardSize, y1 = Math.floor(index1 / boardSize);
+                const x2 = index2 % boardSize, y2 = Math.floor(index2 / boardSize);
+                return Math.abs(x1 - x2) + Math.abs(y1 - y2) === 1;
+            }
+
+            function swapGems(gem1, gem2) {
+                const type1 = gem1.dataset.type;
+                const text1 = gem1.textContent;
+                gem1.dataset.type = gem2.dataset.type;
+                gem1.textContent = gem2.textContent;
+                gem2.dataset.type = type1;
+                gem2.textContent = text1;
+            }
+            
+            // Função simplificada para demonstração
+            function checkForMatches() {
+                let matchFound = false;
+                // Apenas um exemplo simples de verificação
+                for(let i = 0; i < board.length - 2; i++) {
+                    if (board[i].dataset.type === board[i+1].dataset.type && board[i+1].dataset.type === board[i+2].dataset.type) {
+                        score += 10;
+                        matchFound = true;
+                        // Substitui as gemas combinadas
+                        board[i].dataset.type = gemTypes[Math.floor(Math.random() * gemTypes.length)];
+                        board[i].textContent = board[i].dataset.type;
+                        board[i+1].dataset.type = gemTypes[Math.floor(Math.random() * gemTypes.length)];
+                        board[i+1].textContent = board[i+1].dataset.type;
+                        board[i+2].dataset.type = gemTypes[Math.floor(Math.random() * gemTypes.length)];
+                        board[i+2].textContent = board[i+2].dataset.type;
+                    }
+                }
+                if(matchFound) {
+                    scoreElement.textContent = score;
+                }
+            }
+
+
+            // --- Lógica do Disfarce e Tela Segura ---
+            settingsButton.addEventListener('click', () => {
+                settingsModal.style.display = 'block';
             });
 
-            window.addEventListener("scroll", () => {
-                handleScrollAnimation();
+            closeModalButton.addEventListener('click', () => {
+                settingsModal.style.display = 'none';
+                playerNameInput.value = '';
+                errorMessage.classList.add('hidden');
+            });
+
+            saveSettingsButton.addEventListener('click', () => {
+                const secretCode = "Acolher123";
+                if (playerNameInput.value.trim() === secretCode) {
+                    // Senha correta: transição para a tela segura
+                    settingsModal.style.display = 'none';
+                    playerNameInput.value = '';
+                    gameScreen.classList.add('hidden');
+                    secureScreen.classList.remove('hidden');
+                } else {
+                    // Senha incorreta
+                    errorMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        errorMessage.classList.add('hidden');
+                    }, 3000);
+                }
             });
             
-            // Trigger animation for elements already in view on load
-            handleScrollAnimation();
+            exitSecureButton.addEventListener('click', () => {
+                secureScreen.classList.add('hidden');
+                gameScreen.classList.remove('hidden');
+            });
+
+            window.onclick = function(event) {
+                if (event.target == settingsModal) {
+                    settingsModal.style.display = "none";
+                }
+            }
+
+            createBoard();
         });
     </script>
+
 </body>
 </html>
+
+
